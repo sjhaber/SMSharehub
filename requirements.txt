@@ -1,0 +1,7 @@
+flask
+flask-wtf
+flask-bootstrap
+flask-sqlalchemy
+sqlalchemy
+gunicorn
+wtforms
