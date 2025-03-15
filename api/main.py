@@ -7,6 +7,7 @@ from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float
+import os
 
 # Initialize Flask / Bootstrap / SecretKey wtforms
 app = Flask(__name__)
@@ -24,7 +25,8 @@ class ShareForm(FlaskForm):
 class Base(DeclarativeBase):
     pass
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///local_database.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # To prevent warnings
 
 # Create Extension
 db = SQLAlchemy(model_class=Base)
@@ -75,4 +77,4 @@ def go_learn():
     return render_template("learn.html", entries=entries)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=6969)
+    app.run()
