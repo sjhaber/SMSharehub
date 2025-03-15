@@ -3,47 +3,49 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, URLField, IntegerField
 from wtforms.validators import DataRequired, URL
 from flask_bootstrap import Bootstrap5
-# SQL-Alchemy code
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Float
+from sqlalchemy import Integer, String
 import os
 
-# Initialize Flask / Bootstrap / SecretKey wtforms
-app = Flask(__name__)
+# Initialize Flask / Bootstrap
+app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "any-string-you-want-just-keep-it-secret"
 bootstrap = Bootstrap5(app)
 
-# Create Form for Share Page
+# Fix DATABASE_URL for Neon PostgreSQL
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Database Model Setup
+class Base(DeclarativeBase):
+    pass
+
+db = SQLAlchemy(model_class=Base)
+db.init_app(app)
+
+class Data(db.Model):
+    record_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(Integer)  # Renamed to avoid SQLAlchemy conflicts
+    topic: Mapped[str] = mapped_column(String)
+    url: Mapped[str] = mapped_column(String)
+
+# Ensure database tables exist
+with app.app_context():
+    db.create_all()
+
+# Flask Form for Submission
 class ShareForm(FlaskForm):
-    id = IntegerField("Person ID", validators=[DataRequired()], render_kw={"placeholder": "Spencer[1] or Miracle[2] (Required)"})
+    user_id = IntegerField("Person ID", validators=[DataRequired()], render_kw={"placeholder": "Spencer[1] or Miracle[2] (Required)"})
     topic = StringField("Topic", validators=[DataRequired()], render_kw={"placeholder": "Enter a topic (e.g. 'Python SQLite')"})
     link = URLField("URL", validators=[URL()], render_kw={"placeholder": "https://www.example.com/"})
     submit = SubmitField(label="Submit")
 
-# Create Database
-class Base(DeclarativeBase):
-    pass
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # To prevent warnings
-
-# Create Extension
-db = SQLAlchemy(model_class=Base)
-# Call flask app with extension
-db.init_app(app)
-
-# Create table
-class Data(db.Model):
-    record_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    id: Mapped[int] = mapped_column(Integer)
-    topic: Mapped[str] = mapped_column(String)
-    url: Mapped[str] = mapped_column(String)
-
-# Create table schema 
-with app.app_context():
-    db.create_all()
-
+# Routes
 @app.route("/")
 def go_index():
     return render_template("index.html")
@@ -56,11 +58,11 @@ def go_index_upload():
 def go_share():
     share_form = ShareForm()
     if share_form.validate_on_submit():
-        id = share_form.id.data
+        user_id = share_form.user_id.data
         topic = share_form.topic.data
         url = share_form.link.data
         
-        entry = Data(id=id, topic=topic, url=url)
+        entry = Data(user_id=user_id, topic=topic, url=url)
         
         try:
             db.session.add(entry)
@@ -68,7 +70,7 @@ def go_share():
             return redirect(url_for("go_index_upload"))
         except Exception as e:
             db.session.rollback()
-            return f"Error: {e}"
+            return render_template("error.html", error_message=str(e))  # Displays error safely
     return render_template("share.html", form=share_form)
 
 @app.route("/learn")
@@ -76,5 +78,7 @@ def go_learn():
     entries = Data.query.all()
     return render_template("learn.html", entries=entries)
 
+# Production Server for Vercel
 if __name__ == "__main__":
-    app.run()
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
