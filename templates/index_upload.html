@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% block title %}Index{% endblock %}
+{% block content %}
+<h1>UPLOAD COMPLETE</h1>
+<div class="px-4 py-5 my-5 text-center">
+    <img class="d-block mx-auto mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
+    <h1 class="display-5 fw-bold text-body-emphasis">SM ShareHUB</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">Click Share to upload a resource<br>Click Learn to view Shared</p>
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="{{ url_for('go_share') }}" class="btn btn-primary btn-lg px-4 gap-3">Share</a>
+        <a href="{{ url_for('go_learn') }}" class="btn btn-outline-secondary btn-lg px-4">Learn</a>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

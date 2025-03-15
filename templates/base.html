@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {% block styles %}
+        {{ bootstrap.load_css() }}
+    {% endblock %}
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .nav-link {
+        transition: background-color 0.3s, color 0.3s;
+        border-radius: 5px;
+        }
+
+        .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2); 
+        color: #fff !important; 
+        }
+    </style>
+</head>
+<body>
+
+    <header class="p-3 bg-secondary">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <ul class="nav">
+                    <li class="nav-item"><a href="{{ url_for('go_index') }}" class="nav-link text-light">Home</a></li>
+                    <li class="nav-item"><a href="{{ url_for('go_share') }}" class="nav-link text-light">Share</a></li>
+                    <li class="nav-item"><a href="{{ url_for('go_learn') }}" class="nav-link text-light">Learn</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="p-3 bg-secondary">
+        <div class="container">
+            <p class="m-0 text-light">&copy; 2025 Spencer Haber. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

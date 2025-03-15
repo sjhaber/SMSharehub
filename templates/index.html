@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Index Page{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center py-4">
+    <div class="bg-light border rounded-4 shadow-lg text-center" style="max-width: 600px; padding: 2.5rem;">
+      <img class="d-block mx-auto" src="{{ url_for('static', filename='johns.svg') }}" alt="" width="300" height="90" style="margin-bottom: 40px;">
+        <h1 class="display-4 fw-bold text-body-emphasis">SM ShareHUB</h1>
+        <p class="lead mb-4">Click Share to upload a resource<br>Click Learn to view Shared</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="{{ url_for('go_share') }}" class="btn btn-primary btn-lg px-4 py-2">Share</a>
+            <a href="{{ url_for('go_learn') }}" class="btn btn-outline-secondary btn-lg px-4 py-2">Learn</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

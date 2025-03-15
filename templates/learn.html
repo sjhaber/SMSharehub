@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Learn{% endblock %}
+{% block content %}
+
+<div class="container text-center">
+    <h1 class="text-center">Spencer</h1>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 10%;">Record ID</th>
+                <th style="width: 40%;">Topic</th>
+                <th style="width: 50%;">URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            {% if entry.id == 1 %}
+            <tr>
+                <td>{{ entry.record_id }}</td>
+                <td>{{ entry.topic }}</td>
+                <td><a href="{{ entry.url }}">{{ entry.url }}</a></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <br><hr><br>
+
+    <h1 class="text-center">Miracle</h1>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 10%;">Record ID</th>
+                <th style="width: 40%;">Topic</th>
+                <th style="width: 50%;">URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            {% if entry.id == 2 %}
+            <tr>
+                <td>{{ entry.record_id }}</td>
+                <td>{{ entry.topic }}</td>
+                <td><a href="{{ entry.url }}">{{ entry.url }}</a></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
